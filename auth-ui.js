@@ -6,6 +6,7 @@
  * Firebase auth calls (signIn, createUser, resetPassword) are delegated
  * to window._firebaseAuth which app.js populates once it is ready.
  */
+// New push
 
 // ── Initial page state ───────────────────────────────────────
 (function initAuthUI() {
