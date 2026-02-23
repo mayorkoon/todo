@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My To-Do App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ══ AUTH SCREEN ══════════════════════════════════════════ -->
+<div id="authScreen">
+
+  <div class="auth-header">
+    <h1>My <span>Tasks</span></h1>
+    <p>Your personal to-do list, synced everywhere.</p>
+  </div>
+
+  <!-- Tab buttons -->
+  <div class="auth-tabs">
+    <button class="auth-tab active" id="loginTab"  onclick="switchTab('login')">Login</button>
+    <button class="auth-tab"        id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+  </div>
+
+  <!-- Login / Sign Up form -->
+  <div class="auth-form" id="authForm">
+    <input type="text"     id="nameInput"     placeholder="Your name"     />
+    <input type="email"    id="emailInput"    placeholder="Email address" autocomplete="email" />
+    <input type="password" id="passwordInput" placeholder="Password"      autocomplete="current-password" />
+    <div id="passwordRules" style="display:none">
+      <div class="rule" id="rule-length">✕ At least 8 characters</div>
+      <div class="rule" id="rule-upper">✕ One uppercase letter</div>
+      <div class="rule" id="rule-number">✕ One number</div>
+      <div class="rule" id="rule-special">✕ One special character (!@#$%^&amp;*)</div>
+    </div>
+    <div class="auth-error" id="authError"></div>
+    <button class="auth-submit" id="authSubmit" onclick="handleAuth()">Login</button>
+    <button class="forgot-link" id="forgotLink" onclick="showForgotPassword()">Forgot password?</button>
+  </div>
+
+  <!-- Password reset form -->
+  <div class="auth-form" id="resetForm">
+    <p class="reset-info">Enter your email and we'll send you a link to reset your password.</p>
+    <input type="email" id="resetEmail" placeholder="Email address" autocomplete="email" />
+    <div class="auth-error"   id="resetError"></div>
+    <div class="auth-success" id="resetSuccess"></div>
+    <button class="auth-submit" id="resetSubmit" onclick="handlePasswordReset()">Send Reset Link</button>
+    <button class="forgot-link" onclick="hideForgotPassword()">← Back to Login</button>
+  </div>
+
+</div>
+
+<!-- ══ APP SCREEN ════════════════════════════════════════════ -->
+<div id="appScreen">
+
+  <header>
+    <h1>My <span>Tasks</span></h1>
+    <div class="header-right">
+      <div class="date-display" id="dateDisplay"></div>
+      <div class="user-info">Logged in as <strong id="userEmail"></strong></div>
+      <div class="header-actions">
+        <button class="history-btn" onclick="window.location.href='history.html'">📋 History</button>
+        <button class="logout-btn"  onclick="handleLogout()">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Active</div></div>
+    <div class="stat"><div class="stat-num" id="statInProgress">0</div><div class="stat-label">In Progress</div></div>
+    <div class="stat"><div class="stat-num" id="statPending">0</div><div class="stat-label">Pending</div></div>
+    <div class="stat"><div class="stat-num" id="statDone">0</div><div class="stat-label">Completed</div></div>
+  </div>
+
+  <div class="add-form">
+    <input type="text" id="taskInput" placeholder="What needs to be done?" />
+    <select id="categorySelect">
+      <option value="work">Work</option>
+      <option value="personal">Personal</option>
+      <option value="health">Health</option>
+      <option value="other">Other</option>
+    </select>
+    <div class="date-picker-wrapper">
+      <input type="date" id="deadlineInput" />
+      <span class="date-icon">📅</span>
+    </div>
+    <button class="add-btn" id="addBtn" onclick="addTask()">+ Add Task</button>
+  </div>
+
+  <div class="sync-indicator" id="syncIndicator">● Connecting...</div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all',        this)">All</button>
+    <button class="filter-btn"        onclick="setFilter('pending',    this)">Pending</button>
+    <button class="filter-btn"        onclick="setFilter('inprogress', this)">In Progress</button>
+    <button class="filter-btn"        onclick="setFilter('work',       this)">Work</button>
+    <button class="filter-btn"        onclick="setFilter('personal',   this)">Personal</button>
+    <button class="filter-btn"        onclick="setFilter('health',     this)">Health</button>
+    <button class="filter-btn"        onclick="setFilter('other',      this)">Other</button>
+  </div>
+
+  <div class="tasks" id="taskList">
+    <div class="empty"><span>⟳</span>Loading tasks...</div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Edit modal -->
+<div id="modalOverlay"></div>
+<div id="editModal">
+  <div class="modal-header">
+    <h2>Edit Task</h2>
+    <button class="modal-close" id="modalCloseBtn">✕</button>
+  </div>
+  <div class="modal-body">
+    <label>Task title</label>
+    <input type="text" id="editTitle" placeholder="Task title" />
+    <label>Category</label>
+    <select id="editCategory">
+      <option value="work">Work</option>
+      <option value="personal">Personal</option>
+      <option value="health">Health</option>
+      <option value="other">Other</option>
+    </select>
+    <label>Deadline</label>
+    <div class="date-picker-wrapper">
+      <input type="date" id="editDeadline" />
+      <span class="date-icon">📅</span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
+    <button class="modal-save"   id="modalSaveBtn">Save Changes</button>
+  </div>
+</div>
+
+<!--
+  IMPORTANT: auth UI functions live in a plain (non-module) script so
+  onclick="" handlers can reach them immediately. Firebase lives in app.js
+  as a module and attaches addTask / setFilter / handleLogout to window.
+-->
+<script src="auth-ui.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

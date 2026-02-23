@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Tasks — History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- Redirect to login if not authenticated — handled by history.js -->
+<div id="authGate" style="display:none">
+  <div style="max-width:420px; margin:120px auto; text-align:center;">
+    <p style="color:var(--muted); font-size:0.8rem;">Please <a href="index.html" style="color:var(--accent);">log in</a> to view your history.</p>
+  </div>
+</div>
+
+<div id="historyScreen" style="display:none; max-width:720px; margin:0 auto;">
+
+  <header>
+    <h1>My <span>Tasks</span></h1>
+    <div class="header-right">
+      <div class="user-info">Logged in as <strong id="userEmail"></strong></div>
+      <div class="header-actions">
+        <button class="logout-btn" onclick="handleLogout()">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <a href="index.html" class="back-btn">← Back to Tasks</a>
+
+  <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px;">
+    <div>
+      <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin-bottom:4px;">Completed Tasks</h2>
+      <p style="font-size:0.72rem; color:var(--muted);" id="historyCount">Loading...</p>
+    </div>
+    <div class="sync-indicator" id="syncIndicator">● Connecting...</div>
+  </div>
+
+  <div id="historyList">
+    <div class="history-empty"><span>⟳</span>Loading history...</div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="history.js"></script>
+</body>
+</html>
