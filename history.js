@@ -152,7 +152,7 @@ async function restoreTask(id) {
     });
     showToast("Task restored to active!");
   } catch (e) {
-    showToast("Error restoring task.");
+    showToast("Error restoring task.", true);
   }
 }
 
@@ -163,7 +163,7 @@ async function deleteTask(id) {
     await deleteDoc(doc(db, "users", currentUser.uid, "tasks", id));
     showToast("Task removed from history.");
   } catch (e) {
-    showToast("Error removing task.");
+    showToast("Error removing task.", true);
   }
 }
 
@@ -184,9 +184,10 @@ function setSyncStatus(s) {
   el.className   = "sync-indicator " + map[s][1];
 }
 
-function showToast(msg) {
+function showToast(msg, isError) {
   var t = document.getElementById("toast");
   t.textContent   = msg;
+  t.className     = isError ? "toast error" : "toast";
   t.style.display = "block";
   setTimeout(function () { t.style.display = "none"; }, 3000);
 }
