@@ -193,8 +193,8 @@ function startListening() {
 window.addTask = async function () {
   var title    = document.getElementById("taskInput").value.trim();
   var deadline = document.getElementById("deadlineInput").value;
-  if (!title)    { showToast("Please enter a task title!"); return; }
-  if (!deadline) { showToast("Please select a deadline date!"); return; }
+  if (!title)    { showToast("Please enter a task title!", true); return; }
+  if (!deadline) { showToast("Please select a deadline date!", true); return; }
   if (!currentUser) return;
   var btn = document.getElementById("addBtn");
   btn.disabled = true;
@@ -212,7 +212,7 @@ window.addTask = async function () {
     document.getElementById("deadlineInput").value = "";
     showToast("Task added!");
   } catch (e) {
-    showToast("Error adding task.");
+    showToast("Error adding task.", true);
     setSyncStatus("error");
   } finally {
     btn.disabled = false;
@@ -224,7 +224,7 @@ async function deleteTask(id) {
   cancelReminder(id);
   setSyncStatus("syncing");
   try { await deleteDoc(doc(db, "users", currentUser.uid, "tasks", id)); showToast("Task deleted."); }
-  catch (e) { setSyncStatus("error"); }
+  catch (e) { showToast("Error deleting task.", true); setSyncStatus("error"); }
 }
 
 async function changeStatus(id, newStatus) {
@@ -338,7 +338,7 @@ function closeModal() {
 async function saveEdit() {
   if (!editingTaskId || !currentUser) return;
   var title = document.getElementById("editTitle").value.trim();
-  if (!title) { showToast("Title can't be empty."); return; }
+  if (!title) { showToast("Title can't be empty.", true); return; }
   var btn = document.getElementById("modalSaveBtn");
   btn.disabled = true;
   setSyncStatus("syncing");
@@ -351,7 +351,7 @@ async function saveEdit() {
     showToast("Task updated!");
     closeModal();
   } catch (e) {
-    showToast("Error saving changes.");
+    showToast("Error saving changes.", true);
     setSyncStatus("error");
   } finally {
     btn.disabled = false;
@@ -366,9 +366,10 @@ function setSyncStatus(s) {
   el.className   = "sync-indicator " + map[s][1];
 }
 
-function showToast(msg) {
+function showToast(msg, isError) {
   var t = document.getElementById("toast");
   t.textContent   = msg;
+  t.className     = isError ? "toast error" : "toast";
   t.style.display = "block";
   setTimeout(function () { t.style.display = "none"; }, 3000);
 }
