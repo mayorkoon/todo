@@ -191,8 +191,11 @@ function startListening() {
 }
 
 window.addTask = async function () {
-  var title = document.getElementById("taskInput").value.trim();
-  if (!title || !currentUser) { showToast("Please enter a task!"); return; }
+  var title    = document.getElementById("taskInput").value.trim();
+  var deadline = document.getElementById("deadlineInput").value;
+  if (!title)    { showToast("Please enter a task title!"); return; }
+  if (!deadline) { showToast("Please select a deadline date!"); return; }
+  if (!currentUser) return;
   var btn = document.getElementById("addBtn");
   btn.disabled = true;
   setSyncStatus("syncing");

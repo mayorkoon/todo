@@ -10,7 +10,8 @@ import {
   query,
   onSnapshot,
   doc,
-  deleteDoc
+  deleteDoc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 var firebaseConfig = {
@@ -117,7 +118,8 @@ function renderHistory(tasks) {
               dlHtml +
             "</div>" +
           "</div>" +
-          '<button class="task-delete" data-id="' + t.id + '" title="Delete from history">✕</button>' +
+          '<button class="task-restore" data-action="restore" data-id="' + t.id + '" title="Move back to active">↩ Restore</button>' +
+          '<button class="task-delete"  data-action="delete"  data-id="' + t.id + '" title="Delete from history">✕</button>' +
         "</div>"
       );
     }).join("");
@@ -130,12 +132,28 @@ function renderHistory(tasks) {
     );
   }).join("");
 
-  // Attach delete listeners
+  // Attach action listeners — handles both restore and delete
   list.addEventListener("click", function (e) {
-    var btn = e.target.closest("[data-id]");
+    var btn = e.target.closest("[data-action]");
     if (!btn) return;
-    deleteTask(btn.dataset.id);
+    if (btn.dataset.action === "restore") restoreTask(btn.dataset.id);
+    if (btn.dataset.action === "delete")  deleteTask(btn.dataset.id);
   });
+}
+
+// ── Restore task back to active ───────────────────────────────
+async function restoreTask(id) {
+  if (!currentUser) return;
+  try {
+    await updateDoc(doc(db, "users", currentUser.uid, "tasks", id), {
+      status:      "pending",
+      done:        false,
+      completedAt: null
+    });
+    showToast("Task restored to active!");
+  } catch (e) {
+    showToast("Error restoring task.");
+  }
 }
 
 // ── Delete task ───────────────────────────────────────────────

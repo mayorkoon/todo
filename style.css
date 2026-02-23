@@ -218,6 +218,14 @@ h1 span { color: var(--accent); }
 .status-select:hover, .status-select:focus { border-color: #ffc06a; color: var(--text); }
 .status-select option { background: #1a1a1a; }
 
+.task-restore {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  font-family: 'DM Mono', monospace; font-size: 0.68rem; padding: 5px 10px;
+  border-radius: 6px; cursor: pointer; flex-shrink: 0;
+  transition: all 0.2s; letter-spacing: 0.3px;
+}
+.task-restore:hover { border-color: var(--accent); color: var(--accent); }
+
 .task-edit {
   background: transparent; border: 1px solid var(--border); color: var(--muted);
   font-family: 'DM Mono', monospace; font-size: 0.68rem; padding: 5px 12px;
